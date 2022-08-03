@@ -10,8 +10,8 @@ namespace API.Controllers
     
     public class ReservationController : CustomBaseController
     {     
-        private readonly ITrenService<Tren> _service;
-        public ReservationController( ITrenService<Tren> tren_Service)
+        private readonly ITrenService _service;
+        public ReservationController( ITrenService tren_Service)
         {
         
             _service = tren_Service;

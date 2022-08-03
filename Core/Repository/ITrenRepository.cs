@@ -2,14 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Services
+namespace Core.Repository
 {
-    public interface ITrenService
-    {    
+    public interface ITrenRepository
+    {
         Task<List<Tren>> GetTrenİnf();
         public Task<ReservationResponseDto> ReservationControl(TrenDto trenDto);
     }

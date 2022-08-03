@@ -1,5 +1,6 @@
 ﻿using Core;
 using Core.Dtos;
+using Core.Repository;
 using Core.Services;
 using Data;
 using Microsoft.EntityFrameworkCore;
@@ -12,76 +13,26 @@ using System.Threading.Tasks;
 
 namespace Service.Services
 {
-    public class TrenService<T> : ITrenService<T> where T : class
+    public class TrenService : ITrenService
     {
-        
-        private readonly AppDbContext _context;
+        private readonly ITrenRepository _repository;
 
-        public TrenService(AppDbContext context)
+        public TrenService(ITrenRepository repository)
         {
-            
-            _context = context;
+            _repository = repository;
         }
 
-        public async Task<List<Tren>> GetTrenİnf()
+        public Task<List<Tren>> GetTrenİnf()
         {
-            var Response= await _context.Trens.Include(x => x.Wagons).ToListAsync();
-            
-            return  Response;
-        }       
-        public async Task<ReservationResponseDto> ReservationControl(TrenDto trenDto)
-        {
-            var response = await _context.Trens.Where(x => x.Name == trenDto.TrenName).Include(x => x.Wagons).FirstOrDefaultAsync();
-            if (!(response == null))
-            {
-                if (!trenDto.DifferentWagonsAvaliable)
-                {
-                    foreach (Wagon item in response.Wagons)
-                    {
-                        if (!(item.fullseat >= item.Capasity * 70 / 100))
-                        {
-                            var emptyseat = item.Capasity - item.fullseat;
-                            if (emptyseat >= trenDto.NumberOfPeopleToBook)
-                            {
-                                return new ReservationResponseDto { Placementdetail = $"Ad :{item.Name} Kişi Sayısı : {trenDto.NumberOfPeopleToBook}", ReservationAvaliable = true };
-                            }
-
-                        }
-                     
-                    }
-                    return new ReservationResponseDto { Placementdetail = null, ReservationAvaliable = false };
-
-                }
-                else
-                {
-                    foreach (Wagon item in response.Wagons)
-                    {
-                        if (!(item.fullseat >= item.Capasity * 70 / 100))
-                        {
-                            int emptySeat = item.Capasity - item.fullseat;
-                            if (emptySeat >= trenDto.NumberOfPeopleToBook)
-                            {
-                                return new ReservationResponseDto { Placementdetail = $"Ad :{item.Name} Kişi Sayısı : {trenDto.NumberOfPeopleToBook}",ReservationAvaliable = true };
-                            }
-                            else if (emptySeat > 0 && emptySeat < trenDto.NumberOfPeopleToBook)
-                            {
-                                return new ReservationResponseDto { Placementdetail = $"Ad :{item.Name} Kişi Sayısı : {emptySeat}", ReservationAvaliable=true };
-                                trenDto.NumberOfPeopleToBook -= emptySeat;
-                            }                          
-                        }
-                        
-                    }               
-                     return new ReservationResponseDto { Placementdetail = null, ReservationAvaliable = false };                   
-                }
-            }
-           
-            else
-            {
-                return new ReservationResponseDto { Placementdetail = null, ReservationAvaliable = false };
-            }
+           var response=_repository.GetTrenİnf();
+            return response;
         }
 
-       
-    }      
+        public Task<ReservationResponseDto> ReservationControl(TrenDto trenDto)
+        {
+            var response = _repository.ReservationControl(trenDto);
+            return response;
+        }
+    }
 }
 

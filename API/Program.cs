@@ -1,5 +1,7 @@
+using Core.Repository;
 using Core.Services;
 using Data;
+using Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Service.Services;
 using System.Reflection;
@@ -14,8 +16,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<ITrenService,TrenService>();
+builder.Services.AddScoped<ITrenRepository,TrenRepository>();
 
-builder.Services.AddScoped(typeof(ITrenService<>), typeof(TrenService<>));
 builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
